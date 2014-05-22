@@ -1,4 +1,8 @@
 
+
+import networkx
+
+
 #
 # read the graph
 #
@@ -26,9 +30,41 @@ def gen_complexes(g):
                 # add
                 nc = nc + 1
                 # output
-                np = len(l_pc)
-                if np not in d_fh:
-                    fn = "complexes_{%"
-                print n + " : " + ",".join(l_pc)
+                n_op = len(l_pc)
+                if n_op <= 0:
+                    continue
+                # open file for # of operands in this rule
+                if n_op not in d_fh:
+                    rn = "complexes_{0:03d}".format(n_op)
+                    fn = rn + ".tab"
+                    fh = open(fn, "w")
+                    d_fh[n_op] = fh
+                    # output Groovy code for PSL
+                    # add predicate for # of operands
+                    str_op = ", ".join("ArgumentType.UniqueID" for i in range(1, n_op+2)) # # of arguments = n_op + 1
+                    print "model.add predicate: \"Complex_{0:03d}\" , types:{1}".format(n_op, str_op)
+                    #  rule for # of operands
+                    str_op_1 = ", ".join("G{0:03d}".format(i) for i in range(1, n_op+1)) # "G1, G2, G3 [...]"
+                    str_op_2 = " & ".join("Active(G{0:03d}, P)".format(i) for i in range(1, n_op+1)) # "Active(G1, P) & Active(G2, P) [...]"
+                    print "model.add rule : (Complex_3({0}) & {1}) >> Active(G_OUT, P), weight : 1\n".format(str_op_1, str_op_2)
+                    # output Groovy command to load specific file
+                    
+                else:
+                    fh = d_fh[n_op]
+                #
+                fh.write("{0}\t{1}\n".format("\t".join(l_pc), n))
     #
     print "number of complexes: {0}".format(nc)
+    # close all
+    for fh in d_fh.values():
+        fh.close()
+    #
+
+
+
+#
+#
+#
+if __name__ == '__main__':
+    g = read_graph()
+    gen_complexes(g)

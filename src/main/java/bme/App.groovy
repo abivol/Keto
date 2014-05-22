@@ -115,6 +115,11 @@ model.add rule : (GeneLabel(G) & Active(G, P)) >> TargetPatientLabel(P), weight 
 
 /////////////////////////////////////////////////////////////////////
 
+// add rules for complexes
+model.add predicate: "Complex_3" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID, ArgumentType.UniqueID, ArgumentType.UniqueID]
+model.add rule : (Complex_3(G1, G2, G3, G_OUT) & Active(G1, P) & Active(G2, P) & Active(G3, P)) >> Active(G_OUT, P), weight : 1
+
+
 /*
  * Inserting data into the data store
  */
