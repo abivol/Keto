@@ -119,6 +119,11 @@ model.add rule : (GeneLabel(G) & Active(G, P)) >> TargetPatientLabel(P), weight 
 model.add predicate: "Complex_3" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID, ArgumentType.UniqueID, ArgumentType.UniqueID]
 model.add rule : (Complex_3(G1, G2, G3, G_OUT) & Active(G1, P) & Active(G2, P) & Active(G3, P)) >> Active(G_OUT, P), weight : 1
 
+// BEGIN: COMPLEX_003
+model.add predicate: "COMPLEX_003", types:[ArgumentType.UniqueID, ArgumentType.UniqueID, ArgumentType.UniqueID, ArgumentType.UniqueID]
+model.add rule : (COMPLEX_003(G001, G002, G003, G_OUT) & (Active(G001, P) & Active(G002, P) & Active(G003, P))) >> Active(G_OUT, P), weight : 1
+// END: COMPLEX_003
+
 
 /*
  * Inserting data into the data store
@@ -189,6 +194,12 @@ InserterUtils.loadDelimitedData(inserter, traindir + "Similar.csv", ",")
 
 inserter = data.getInserter(TargetPatientLabel, dummy_tr)
 InserterUtils.loadDelimitedDataTruth(inserter, traindir + "BogusPatientLabel.csv", ",")
+
+// BEGIN: COMPLEX_003
+inserter = data.getInserter(COMPLEX_003, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, traindir + "complex_003.tab", "\t")
+// END: COMPLEX_003
+
 
 /*
  * Testing split for model inference
