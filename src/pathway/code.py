@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+
+#
+# Convert superpathway format to PSL rules.
+#
 
 
 import networkx
@@ -90,43 +95,37 @@ class PSLCodeGen:
         fh.close()
 
     #
-    # generate PSL code & data for composite entities: complexes / families
-    # act like AND/OR gates w/ various number of operands
+    # generate PSL code & data for composite entities: complexes / families,
+    # which act like AND/OR gates w/ various number of operands
     #
     def parse_gates(self, e_type="complex"):
         #
         g = self.Graph
         rel = {"complex":"component>", "family":"member>"} [e_type]
         # file handles (each file stores expressions w/ a specific number of operands)
-        d_fh = {}
+        fn = "{0}.tab".format(e_type)
+        fh = open(fn, "w")
         # generate rules for entities
         edgeTypes = networkx.get_edge_attributes(g, "edge")
         for n in g.nodes():
-            if n.endswith("({0})".format(e_type)):
-                #
-                if len(g.successors(n)) > 0 and len(g.predecessors(n)) > 0:
-                    # select only component> predecessors
-                    l_pc = [p for p in g.predecessors(n) if edgeTypes[(p, n)] == rel]
-                    # output
-                    n_op = len(l_pc)
-                    if n_op <= 0:
-                        continue
-                    # open file for # of operands in this rule
-                    if n_op not in d_fh:
-                        fn = gen_filename(n_op, e_type)
-                        fh = open(fn, "w")
-                        d_fh[n_op] = fh
-                    else:
-                        fh = d_fh[n_op]
-                    #
-                    fh.write("{0}\t{1}\n".format("\t".join(self.get_node_id(p) for p in l_pc), self.get_node_id(n)))
+            if (not n.endswith("({0})".format(e_type)) or
+                len(g.successors(n)) <= 0 or len(g.predecessors(n)) <= 0):
+                continue
+            # select only component> predecessors
+            l_pc = [p for p in g.predecessors(n) if edgeTypes[(p, n)] == rel]
+            # output
+            n_op = len(l_pc)
+            if n_op <= 0:
+                continue
+            # weight
+            w = 1.0
+            if e_type == "complex":
+                w = 1.0 / n_op
+            #
+            for p in l_pc:
+                fh.write("{0}\t{1}\t{2}\n".format(self.get_node_id(p), self.get_node_id(n), w))
         #
-        # close all
-        for fh in d_fh.values():
-            fh.close()
-        # output Groovy code for PSL
-        self.gen_code_gates(d_fh, e_type)
-        #
+        fh.close()
 
 
     #
