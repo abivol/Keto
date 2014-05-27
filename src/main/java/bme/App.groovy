@@ -187,6 +187,9 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "TargetPatientLabel.cs
 inserter = data.getInserter(Active, dummy_tr)
 InserterUtils.loadDelimitedData(inserter, traindir + "Active.csv", ",")
 
+inserter = data.getInserter(GeneLabel, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, traindir + "GeneLabel.csv", ",")
+
 inserter = data.getInserter(TargetPatientLabel, dummy_tr)
 InserterUtils.loadDelimitedDataTruth(inserter, traindir + "BogusPatientLabel.csv", ",")
 
@@ -233,8 +236,11 @@ InserterUtils.loadDelimitedData(inserter, testdir + "Similar.csv", ",")
 
 /* ?? predicates on latents ?? */
 
-inserter = data.getInserter(Active, dummy_tr)
-InserterUtils.loadDelimitedData(inserter, testdir + "Active.csv", ",")
+// inserter = data.getInserter(Active, dummy_tr)
+// InserterUtils.loadDelimitedData(inserter, testdir + "Active.csv", ",")
+
+// inserter = data.getInserter(GeneLabel, dummy_tr)
+// InserterUtils.loadDelimitedData(inserter, testdir + "GeneLabel.csv", ",")
 
 /*to populate testDB with the correct rvs
  */
