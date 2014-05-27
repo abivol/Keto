@@ -158,6 +158,19 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "MutMinus.csv", ",");
 inserter = data.getInserter(PatientLabel, observed_tr)
 InserterUtils.loadDelimitedDataTruth(inserter, traindir + "PatientLabel.csv", ",");
 
+inserter = data.getInserter(Activates, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, traindir + "Activates.csv", ",")
+// COMPLEX
+// InserterUtils.loadDelimitedDataTruth(inserter, traindir + "complex.tab", "\t")
+// FAMILY
+// InserterUtils.loadDelimitedDataTruth(inserter, traindir + "family.tab", "\t")
+
+inserter = data.getInserter(Inhibits, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, traindir + "Inhibits.csv", ",")
+
+inserter = data.getInserter(Similar, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, traindir + "Similar.csv", ",")
+
 /*
  * Ground truth for training data for weight learning
  */
@@ -173,19 +186,6 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "TargetPatientLabel.cs
 
 inserter = data.getInserter(Active, dummy_tr)
 InserterUtils.loadDelimitedData(inserter, traindir + "Active.csv", ",")
-
-inserter = data.getInserter(Activates, dummy_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "Activates.csv", ",")
-// COMPLEX
-// InserterUtils.loadDelimitedDataTruth(inserter, traindir + "complex.tab", "\t")
-// FAMILY
-// InserterUtils.loadDelimitedDataTruth(inserter, traindir + "family.tab", "\t")
-
-inserter = data.getInserter(Inhibits, dummy_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "Inhibits.csv", ",")
-
-inserter = data.getInserter(Similar, dummy_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "Similar.csv", ",")
 
 inserter = data.getInserter(TargetPatientLabel, dummy_tr)
 InserterUtils.loadDelimitedDataTruth(inserter, traindir + "BogusPatientLabel.csv", ",")
@@ -218,11 +218,6 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "MutMinus.csv", ",");
 inserter = data.getInserter(TargetPatientLabel, PatientLabelTruth)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "PatientLabel.csv", ",");
 
-/* ?? predicates on latents ?? */
-
-inserter = data.getInserter(Active, dummy_tr)
-InserterUtils.loadDelimitedData(inserter, testdir + "Active.csv", ",")
-
 inserter = data.getInserter(Activates, dummy_te)
 InserterUtils.loadDelimitedData(inserter, testdir + "Activates.csv", ",")
 // COMPLEX
@@ -235,6 +230,11 @@ InserterUtils.loadDelimitedData(inserter, testdir + "Inhibits.csv", ",")
 
 inserter = data.getInserter(Similar, dummy_te)
 InserterUtils.loadDelimitedData(inserter, testdir + "Similar.csv", ",")
+
+/* ?? predicates on latents ?? */
+
+inserter = data.getInserter(Active, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, testdir + "Active.csv", ",")
 
 /*to populate testDB with the correct rvs
  */
@@ -253,9 +253,7 @@ Database dummy_DB = data.getDatabase(dummy_tr, [Active, TargetPatientLabel] as S
 
 /* Populate distribution DB. */
 DatabasePopulator dbPop = new DatabasePopulator(distributionDB);
-dbPop.populateFromDB(dummy_DB, Activates);
-dbPop.populateFromDB(dummy_DB, Inhibits);
-dbPop.populateFromDB(dummy_DB, Similar);
+dbPop.populateFromDB(dummy_DB, Active);
 dbPop.populateFromDB(dummy_DB, TargetPatientLabel);
 
 

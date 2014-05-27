@@ -61,7 +61,7 @@ def gr_gen(ng):
 def gen_active(p1, p2, ng):
     for p in range(p1, p2+1):
         for g in range(1, ng+1):
-            print "{0},{1}".format(p, g)
+            print "{0},{1}".format(g, p)
 
 
 #
