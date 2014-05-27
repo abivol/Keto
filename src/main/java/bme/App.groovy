@@ -255,11 +255,12 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "BogusPatientLabel.csv"
 
 Database distributionDB = data.getDatabase(predict_tr, [ExpUp, ExpDown, MutPlus, MutMinus, PatientLabel, Activates, Inhibits, Similar] as Set, observed_tr);
 Database truthDB = data.getDatabase(truth_tr, [TargetPatientLabel] as Set)
-Database dummy_DB = data.getDatabase(dummy_tr, [Active, TargetPatientLabel] as Set)
+Database dummy_DB = data.getDatabase(dummy_tr, [Active, GeneLabel, TargetPatientLabel] as Set)
 
 /* Populate distribution DB. */
 DatabasePopulator dbPop = new DatabasePopulator(distributionDB);
 dbPop.populateFromDB(dummy_DB, Active);
+dbPop.populateFromDB(dummy_DB, GeneLabel);
 dbPop.populateFromDB(dummy_DB, TargetPatientLabel);
 
 
