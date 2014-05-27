@@ -171,6 +171,9 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "TargetPatientLabel.cs
  * ??? predicates on latents ???
  */
 
+inserter = data.getInserter(Active, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, traindir + "Active.csv", ",")
+
 inserter = data.getInserter(Activates, dummy_tr)
 InserterUtils.loadDelimitedData(inserter, traindir + "Activates.csv", ",")
 // COMPLEX
@@ -216,6 +219,9 @@ inserter = data.getInserter(TargetPatientLabel, PatientLabelTruth)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "PatientLabel.csv", ",");
 
 /* ?? predicates on latents ?? */
+
+inserter = data.getInserter(Active, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, testdir + "Active.csv", ",")
 
 inserter = data.getInserter(Activates, dummy_te)
 InserterUtils.loadDelimitedData(inserter, testdir + "Activates.csv", ",")

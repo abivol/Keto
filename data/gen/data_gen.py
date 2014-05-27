@@ -58,9 +58,19 @@ def gr_gen(ng):
 #
 #
 #
+def gen_active(p1, p2, ng):
+    for p in range(p1, p2+1):
+        for g in range(1, ng+1):
+            print "{0},{1}".format(p, g)
+
+
+#
+#
+#
 if __name__ == '__main__':
-    pg_gen(["ExpUp.csv", "ExpDown.csv"], 11, 15, 9)
-    pg_gen(["MutPlus.csv", "MutMinus.csv"], 11, 15, 9)
-    gr_gen(9)
+    # pg_gen(["ExpUp.csv", "ExpDown.csv"], 11, 15, 9)
+    # pg_gen(["MutPlus.csv", "MutMinus.csv"], 11, 15, 9)
+    # gr_gen(9)
     #
-    pl_gen(11, 15)
+    # pl_gen(11, 15)
+    gen_active(1, 15, 9)
