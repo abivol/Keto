@@ -76,16 +76,19 @@ model.add predicate: "TargetPatientLabel" , types:[ArgumentType.UniqueID]
 /*
  * Evidence (observed) predicates
  */
+
+// ExpUp(G, P) - observed
 model.add predicate: "ExpUp" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
+model.add predicate: "TargetExpUp" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
+// ExpDown(G, P) - observed
 model.add predicate: "ExpDown" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
+model.add predicate: "TargetExpDown" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
 // model.add predicate: "MutPlus" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]  // GOF
 // model.add predicate: "MutMinus" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]  // LOF
-model.add predicate: "ExpUpLat" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
-model.add predicate: "ExpDownLat" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 // Active(G, P) -- latent
-model.add predicate: "ActiveObs" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
-model.add predicate: "ActiveLat" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
+model.add predicate: "Active" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
+model.add predicate: "TargetActive" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 // Activates(G1, G2) -- observed
 model.add predicate: "Activates" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
@@ -101,25 +104,27 @@ model.add predicate: "Similar" , types:[ArgumentType.UniqueID, ArgumentType.Uniq
 // model.add rule : MutPlus(G, P) + MutMinus(G, P) <= 1.0
 
 // rules to infer gene activity from evidence
-model.add rule : ExpUp(G, P) >> ActiveObs(G, P), weight : 1
-model.add rule : ExpDown(G, P) >> ~ActiveObs(G, P), weight : 1
+model.add rule : ExpUp(G, P) >> Active(G, P), weight : 1
+model.add rule : ExpDown(G, P) >> ~Active(G, P), weight : 1
 // model.add rule : MutPlus(G,P) >> ~ActiveObs(G, P), weight : 1
 // model.add rule : MutMinus(G, P) >> ActiveObs(G, P), weight : 1
 //
-model.add rule : ExpUpLat(G, P) >> ActiveLat(G, P), weight : 1
-model.add rule : ExpDownLat(G, P) >> ~ActiveLat(G, P), weight : 1
+model.add rule : TargetExpUp(G, P) >> TargetActive(G, P), weight : 1
+model.add rule : TargetExpDown(G, P) >> ~TargetActive(G, P), weight : 1
 // model.add rule : MutPlusLat(G,P) >> ~ActiveLat(G, P), weight : 1
 // model.add rule : MutMinusLat(G, P) >> ActiveLat(G, P), weight : 1
 
 // rules to relate gene activities via gene interaction network
-// model.add rule : (ActiveObs(G, P) >> ActiveLat(G, P)), weight : 1
-model.add rule : (Inhibits(G1, G2) & ActiveObs(G1, P)) >> ~ActiveObs(G2, P), weight : 1
-model.add rule : (Activates(G1, G2) & ActiveObs(G1, P)) >> ActiveObs(G2, P), weight : 1
+model.add rule : (Inhibits(G1, G2) & Active(G1, P)) >> ~Active(G2, P), weight : 1
+model.add rule : (Activates(G1, G2) & Active(G1, P)) >> Active(G2, P), weight : 1
 model.add rule : (Similar(G1, G2) & GeneLabel(G1)) >> GeneLabel(G2), weight : 1
+//
+model.add rule : (Inhibits(G1, G2) & TargetActive(G1, P)) >> ~TargetActive(G2, P), weight : 1
+model.add rule : (Activates(G1, G2) & TargetActive(G1, P)) >> TargetActive(G2, P), weight : 1
 
 // label inference
-model.add rule : (PatientLabel(P) & ActiveObs(G, P)) >> GeneLabel(G), weight : 1
-model.add rule : (GeneLabel(G) & ActiveLat(G, P)) >> TargetPatientLabel(P), weight : 1
+model.add rule : (PatientLabel(P) & Active(G, P)) >> GeneLabel(G), weight : 1
+model.add rule : (GeneLabel(G) & TargetActive(G, P)) >> TargetPatientLabel(P), weight : 1
 
 
 /*
@@ -164,12 +169,11 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "ExpDown.csv", ",");
 // inserter = data.getInserter(MutMinus, observed_tr)
 // InserterUtils.loadDelimitedDataTruth(inserter, traindir + "MutMinus.csv", ",");
 
-inserter = data.getInserter(ExpUpLat, observed_tr)
-InserterUtils.loadDelimitedDataTruth(inserter, traindir + "ExpUpLat.csv", ",");
+inserter = data.getInserter(TargetExpUp, observed_tr)
+InserterUtils.loadDelimitedDataTruth(inserter, traindir + "TargetExpUp.csv", ",");
 
-inserter = data.getInserter(ExpDownLat, observed_tr)
-InserterUtils.loadDelimitedDataTruth(inserter, traindir + "ExpDownLat.csv", ",");
-
+inserter = data.getInserter(TargetExpDown, observed_tr)
+InserterUtils.loadDelimitedDataTruth(inserter, traindir + "TargetExpDown.csv", ",");
 
 inserter = data.getInserter(PatientLabel, observed_tr)
 InserterUtils.loadDelimitedDataTruth(inserter, traindir + "PatientLabel.csv", ",");
@@ -187,9 +191,6 @@ InserterUtils.loadDelimitedData(inserter, traindir + "Inhibits.csv", ",")
 inserter = data.getInserter(Similar, observed_tr)
 InserterUtils.loadDelimitedData(inserter, traindir + "Similar.csv", ",")
 
-inserter = data.getInserter(ActiveObs, observed_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "ActiveObserved.csv", ",")
-
 
 /*
  * Ground truth for training data for weight learning
@@ -204,8 +205,11 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "TargetPatientLabel.cs
  * ??? predicates on latents ???
  */
 
-inserter = data.getInserter(ActiveLat, dummy_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "ActiveLatent.csv", ",")
+inserter = data.getInserter(Active, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, traindir + "Active.csv", ",")
+
+inserter = data.getInserter(TargetActive, dummy_tr)
+InserterUtils.loadDelimitedData(inserter, traindir + "TargetActive.csv", ",")
 
 inserter = data.getInserter(GeneLabel, dummy_tr)
 InserterUtils.loadDelimitedData(inserter, traindir + "GeneLabel.csv", ",")
@@ -215,71 +219,17 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "BogusPatientLabel.csv
 
 
 /*
- * Testing split for model inference
- * Observed partitions
- */
-
-//def testdir = 'data'+java.io.File.separator+ foldStr + 'test'+java.io.File.separator;
-//def testdir = 'data' + java.io.File.separator + 'test' + java.io.File.separator;
-
-//inserter = data.getInserter(ExpUp, observed_te)
-//InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpUp.csv", ",");
-
-//inserter = data.getInserter(ExpDown, observed_te)
-//InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpDown.csv", ",");
-
-//inserter = data.getInserter(MutPlus, observed_te)
-//InserterUtils.loadDelimitedDataTruth(inserter, testdir + "MutPlus.csv", ",");
-
-//inserter = data.getInserter(MutMinus, observed_te)
-//InserterUtils.loadDelimitedDataTruth(inserter, testdir + "MutMinus.csv", ",");
-
-/*
- * Random variable partitions
- */
-
-//inserter = data.getInserter(TargetPatientLabel, PatientLabelTruth)
-//InserterUtils.loadDelimitedDataTruth(inserter, testdir + "PatientLabel.csv", ",");
-
-//inserter = data.getInserter(Activates, dummy_te)
-//InserterUtils.loadDelimitedData(inserter, testdir + "Activates.csv", ",")
-// COMPLEX
-// InserterUtils.loadDelimitedDataTruth(inserter, traindir + "complex.tab", "\t")
-// FAMILY
-// InserterUtils.loadDelimitedDataTruth(inserter, traindir + "family.tab", "\t")
-
-//inserter = data.getInserter(Inhibits, dummy_te)
-//InserterUtils.loadDelimitedData(inserter, testdir + "Inhibits.csv", ",")
-
-//inserter = data.getInserter(Similar, dummy_te)
-//InserterUtils.loadDelimitedData(inserter, testdir + "Similar.csv", ",")
-
-/* ?? predicates on latents ?? */
-
-// inserter = data.getInserter(Active, dummy_tr)
-// InserterUtils.loadDelimitedData(inserter, testdir + "Active.csv", ",")
-
-// inserter = data.getInserter(GeneLabel, dummy_tr)
-// InserterUtils.loadDelimitedData(inserter, testdir + "GeneLabel.csv", ",")
-
-/*to populate testDB with the correct rvs
- */
-
-//inserter = data.getInserter(TargetPatientLabel, dummy_te)
-//InserterUtils.loadDelimitedDataTruth(inserter, testdir + "BogusPatientLabel.csv", ",");
-
-
-/*
  * Set up training databases for weight learning using training set
  */
 
-Database distributionDB = data.getDatabase(predict_tr, [ExpUp, ExpDown, MutPlus, MutMinus, PatientLabel, ActiveObs, Activates, Inhibits, Similar] as Set, observed_tr);
+Database distributionDB = data.getDatabase(predict_tr, [ExpUp, ExpDown, TargetExpUp, TargetExpDown, MutPlus, MutMinus, PatientLabel, Activates, Inhibits, Similar] as Set, observed_tr);
 Database truthDB = data.getDatabase(truth_tr, [TargetPatientLabel] as Set)
-Database dummy_DB = data.getDatabase(dummy_tr, [ActiveLat, GeneLabel, TargetPatientLabel] as Set)
+Database dummy_DB = data.getDatabase(dummy_tr, [Active, TargetActive, GeneLabel, TargetPatientLabel] as Set)
 
 /* Populate distribution DB. */
 DatabasePopulator dbPop = new DatabasePopulator(distributionDB);
-dbPop.populateFromDB(dummy_DB, ActiveLat);
+dbPop.populateFromDB(dummy_DB, Active);
+dbPop.populateFromDB(dummy_DB, TargetActive);
 dbPop.populateFromDB(dummy_DB, GeneLabel);
 dbPop.populateFromDB(dummy_DB, TargetPatientLabel);
 
@@ -300,6 +250,69 @@ weightLearning.close();
 println model;
 
 
+/////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * Testing split for model inference
+ * Observed partitions
+ */
+
+//def testdir = 'data'+java.io.File.separator+ foldStr + 'test'+java.io.File.separator;
+def testdir = 'data' + java.io.File.separator + 'test' + java.io.File.separator;
+
+inserter = data.getInserter(TargetExpUp, observed_te)
+InserterUtils.loadDelimitedDataTruth(inserter, testdir + "TargetExpUp.csv", ",");
+
+inserter = data.getInserter(TargetExpDown, observed_te)
+InserterUtils.loadDelimitedDataTruth(inserter, testdir + "TargetExpDown.csv", ",");
+
+/*
+ * Random variable partitions
+ */
+
+
+/* ?? predicates on latents ?? */
+
+inserter = data.getInserter(TargetActive, dummy_te)
+InserterUtils.loadDelimitedData(inserter, testdir + "TargetActive.csv", ",")
+
+inserter = data.getInserter(TargetPatientLabel, dummy_te)
+InserterUtils.loadDelimitedDataTruth(inserter, traindir + "BogusPatientLabel.csv", ",")
+
+/*to populate testDB with the correct rvs
+ */
+
+//inserter = data.getInserter(TargetPatientLabel, dummy_te)
+//InserterUtils.loadDelimitedDataTruth(inserter, testdir + "BogusPatientLabel.csv", ",");
+
+
+Database testDB = data.getDatabase(predict_te, [TargetExpUp, TargetExpDown] as Set, observed_te);
+
+Database testTruth_PatientLabel = data.getDatabase(PatientLabelTruth, [TargetPatientLabel] as Set)
+
+Database dummy_test = data.getDatabase(dummy_te, [TargetActive, TargetPatientLabel] as Set)
+
+/* Populate in test DB. */
+
+DatabasePopulator test_populator = new DatabasePopulator(testDB);
+test_populator.populateFromDB(dummy_test, TargetActive);
+test_populator.populateFromDB(dummy_test, TargetPatientLabel);
+
+/*
+ * Inference
+ */
+
+MPEInference mpe = new MPEInference(model, testDB, cb)
+FullInferenceResult result = mpe.mpeInference()
+System.out.println("Objective: " + result.getTotalWeightedIncompatibility())
+
+
+//
 distributionDB.close()
 truthDB.close()
 dummy_DB.close()
+//
+testDB.close()
+testTruth_PatientLabel.close()
+dummy_test.close()
