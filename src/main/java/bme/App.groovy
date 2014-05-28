@@ -271,6 +271,8 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "TargetExpDown.csv", ",
  * Random variable partitions
  */
 
+inserter = data.getInserter(TargetPatientLabel, PatientLabelTruth)
+InserterUtils.loadDelimitedDataTruth(inserter, testdir + "PatientLabel.csv",",");
 
 /* ?? predicates on latents ?? */
 
@@ -278,7 +280,7 @@ inserter = data.getInserter(TargetActive, dummy_te)
 InserterUtils.loadDelimitedData(inserter, testdir + "TargetActive.csv", ",")
 
 inserter = data.getInserter(TargetPatientLabel, dummy_te)
-InserterUtils.loadDelimitedDataTruth(inserter, traindir + "BogusPatientLabel.csv", ",")
+InserterUtils.loadDelimitedDataTruth(inserter, testdir + "BogusPatientLabel.csv", ",")
 
 /*to populate testDB with the correct rvs
  */
@@ -306,6 +308,10 @@ test_populator.populateFromDB(dummy_test, TargetPatientLabel);
 MPEInference mpe = new MPEInference(model, testDB, cb)
 FullInferenceResult result = mpe.mpeInference()
 System.out.println("Objective: " + result.getTotalWeightedIncompatibility())
+
+
+Evaluator evaluator = new Evaluator(testDB, testTruth_PatientLabel, TargetPatientLabel);
+evaluator.outputToFile();
 
 
 //

@@ -35,7 +35,7 @@ public class Evaluator {
 	
 	public void outputToFile(){
 		BufferedWriter writer = null;
-		String dir = "/Users/dhanyasridhar/Documents/psl-stance/";
+		String dir = "./";
 		String groundTruthFile = p.toString() + "_truth.csv";
 		String resultsFile = p.toString() + "_inference_results.csv";
 		try {
@@ -43,16 +43,16 @@ public class Evaluator {
 			
 			for (GroundAtom atom : Queries.getAllAtoms(result, p)){
 				GroundTerm[] terms = atom.getArguments();
-				writer.append(terms[0] + "," + terms[1] + "," + atom.getValue() + "\n");
-                                writer.flush();
+				writer.append(terms[0] + "," + atom.getValue() + "\n");
+                writer.flush();
 			}
 			
 			writer = new BufferedWriter(new FileWriter(groundTruthFile));
 			
 			for (GroundAtom atom : Queries.getAllAtoms(baseline, p)){
 				GroundTerm[] terms = atom.getArguments();
-				writer.append(terms[0] + "," + terms[1] + "," + atom.getValue() + "\n");
-                                writer.flush();
+				writer.append(terms[0] + "," + "," + atom.getValue() + "\n");
+                writer.flush();
 			}
 			writer.close();
 
