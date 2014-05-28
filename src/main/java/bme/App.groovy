@@ -42,6 +42,7 @@ import edu.umd.cs.psl.model.atom.RandomVariableAtom
 import edu.umd.cs.psl.model.kernel.CompatibilityKernel
 import edu.umd.cs.psl.model.parameters.PositiveWeight
 import edu.umd.cs.psl.model.parameters.Weight
+import edu.umd.cs.psl.model.predicate.StandardPredicate
 import edu.umd.cs.psl.ui.loading.*
 import edu.umd.cs.psl.util.database.Queries
 import edu.ucsc.cs.utils.Evaluator;
@@ -222,7 +223,10 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "BogusPatientLabel.csv
  * Set up training databases for weight learning using training set
  */
 
-Database distributionDB = data.getDatabase(predict_tr, [ExpUp, ExpDown, TargetExpUp, TargetExpDown, MutPlus, MutMinus, PatientLabel, Activates, Inhibits, Similar] as Set, observed_tr);
+Set closedPredicates = [ExpUp, ExpDown, TargetExpUp, TargetExpDown, MutPlus, MutMinus, PatientLabel, Activates, Inhibits, Similar] as Set;
+
+
+Database distributionDB = data.getDatabase(predict_tr, closedPredicates, observed_tr);
 Database truthDB = data.getDatabase(truth_tr, [TargetPatientLabel] as Set)
 Database dummy_DB = data.getDatabase(dummy_tr, [Active, TargetActive, GeneLabel, TargetPatientLabel] as Set)
 
@@ -289,7 +293,7 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "BogusPatientLabel.csv"
 //InserterUtils.loadDelimitedDataTruth(inserter, testdir + "BogusPatientLabel.csv", ",");
 
 
-Database testDB = data.getDatabase(predict_te, [TargetExpUp, TargetExpDown] as Set, observed_te);
+Database testDB = data.getDatabase(predict_te, closedPredicates, observed_te);
 
 Database testTruth_PatientLabel = data.getDatabase(PatientLabelTruth, [TargetPatientLabel] as Set)
 
@@ -300,6 +304,25 @@ Database dummy_test = data.getDatabase(dummy_te, [TargetActive, TargetPatientLab
 DatabasePopulator test_populator = new DatabasePopulator(testDB);
 test_populator.populateFromDB(dummy_test, TargetActive);
 test_populator.populateFromDB(dummy_test, TargetPatientLabel);
+//
+// from train!!!
+//
+// Set closedPredicates = [ExpUp, ExpDown, TargetExpUp, TargetExpDown, MutPlus, MutMinus, PatientLabel, Activates, Inhibits, Similar] as Set;
+//test_populator.populateFromDB(distributionDB, ExpUp);
+//test_populator.populateFromDB(distributionDB, ExpDown);
+//test_populator.populateFromDB(distributionDB, TargetExpUp);
+//test_populator.populateFromDB(distributionDB, TargetExpDown);
+//test_populator.populateFromDB(distributionDB, PatientLabel);
+//test_populator.populateFromDB(distributionDB, Activates);
+//test_populator.populateFromDB(distributionDB, Inhibits);
+//test_populator.populateFromDB(distributionDB, Similar);
+
+//
+// test_populator.populateFromDB(dummy_DB, Active);
+// test_populator.populateFromDB(dummy_DB, TargetActive);
+test_populator.populateFromDB(dummy_DB, GeneLabel);
+// test_populator.populateFromDB(dummy_DB, TargetPatientLabel);
+
 
 /*
  * Inference
