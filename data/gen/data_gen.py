@@ -15,7 +15,7 @@ def pg_gen(fn, p1, p2, ng):
         for g in random.sample(gene_set, sg):
             f = fh[random.randint(0, 1)]
             v = random.random()
-            f.write("{0},{1},{2:.3f}\n".format(p, g, v))
+            f.write("{0},{1},{2:.3f}\n".format(g, p, v))
     #
     for f in fh:
         f.close()
@@ -73,4 +73,4 @@ if __name__ == '__main__':
     # gr_gen(9)
     #
     # pl_gen(11, 15)
-    gen_active(1, 15, 9)
+    gen_active(7, 9, 9)
