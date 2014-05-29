@@ -51,7 +51,7 @@ public class Evaluator {
 			
 			for (GroundAtom atom : Queries.getAllAtoms(baseline, p)){
 				GroundTerm[] terms = atom.getArguments();
-				writer.append(terms[0] + "," + "," + atom.getValue() + "\n");
+				writer.append(terms[0] + "," + atom.getValue() + "\n");
                 writer.flush();
 			}
 			writer.close();
