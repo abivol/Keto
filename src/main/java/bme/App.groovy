@@ -46,6 +46,7 @@ import edu.umd.cs.psl.model.predicate.StandardPredicate
 import edu.umd.cs.psl.ui.loading.*
 import edu.umd.cs.psl.util.database.Queries
 import edu.ucsc.cs.utils.Evaluator;
+import edu.ucsc.cs.utils.Dumper;
 
 import edu.umd.cs.psl.evaluation.statistics.RankingScore
 import edu.umd.cs.psl.evaluation.statistics.SimpleRankingComparator
@@ -236,6 +237,13 @@ weightLearning.close();
  mlpe.close();
  */
 
+//
+Dumper dumper = new Dumper(distributionDB, GeneLabel, "GeneLabel_distributionDB");
+dumper.outputToFile();
+//
+dumper = new Dumper(dummy_DB, GeneLabel, "GeneLabel_dummy_DB");
+dumper.outputToFile();
+
 println model;
 
 
@@ -290,7 +298,10 @@ test_populator.populateFromDB(dummy_test, TargetPatientLabel);
 //
 // from train??!!!
 //
-test_populator.populateFromDB(dummy_DB, GeneLabel);
+test_populator.populateFromDB(distributionDB, GeneLabel);
+//
+dumper = new Dumper(testDB, GeneLabel, "GeneLabel_testDB");
+dumper.outputToFile();
 // test_populator.populateFromDB(dummy_DB, Activates);
 // test_populator.populateFromDB(dummy_DB, Inhibits);
 
