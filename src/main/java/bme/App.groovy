@@ -121,10 +121,6 @@ model.add rule : (TargetPatient(P) & GeneLabel(G) & Active(G, P)) >> TargetPatie
 // model.add rule: ~TargetPatientLabel(P), weight : 1
 
 
-// define closed predicates
-Set closedPredicates = [ExpUp, ExpDown, MutPlus, MutMinus, TargetPatient, PatientLabel, Activates, Inhibits, Similar] as Set;
-
-
 /*
  * Inserting data into the data store
  */
@@ -214,7 +210,8 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "BogusPatientLabel.csv
  * Set up training databases for weight learning using training set
  */
 
-Database distributionDB = data.getDatabase(predict_tr, closedPredicates, observed_tr);
+Set closedPredicates_tr = [ExpUp, ExpDown, MutPlus, MutMinus, TargetPatient, PatientLabel, Activates, Inhibits, Similar] as Set;
+Database distributionDB = data.getDatabase(predict_tr, closedPredicates_tr, observed_tr);
 Database truthDB = data.getDatabase(truth_tr, [TargetPatientLabel] as Set)
 Database dummy_DB = data.getDatabase(dummy_tr, [Active, GeneLabel, TargetPatientLabel] as Set)
 
@@ -280,11 +277,10 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "BogusPatientLabel.csv"
 /*to populate testDB with the correct rvs
  */
 
-Database testDB = data.getDatabase(predict_te, closedPredicates, observed_te);
-
+Set closedPredicates_te = [ExpUp, ExpDown, MutPlus, MutMinus, TargetPatient, PatientLabel, Activates, Inhibits, Similar, GeneLabel] as Set;
+Database testDB = data.getDatabase(predict_te, closedPredicates_te, observed_te);
 Database testTruth_PatientLabel = data.getDatabase(PatientLabelTruth, [TargetPatientLabel] as Set)
-
-Database dummy_test = data.getDatabase(dummy_te, [Active, GeneLabel, TargetPatientLabel] as Set)
+Database dummy_test = data.getDatabase(dummy_te, [Active, TargetPatientLabel] as Set)
 
 /* Populate in test DB. */
 
