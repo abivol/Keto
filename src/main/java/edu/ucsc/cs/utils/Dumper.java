@@ -35,7 +35,7 @@ public class Dumper {
 	public void outputToFile(){
 		BufferedWriter writer = null;
 		String dir = "./";
-		String outFile = p.toString() + this.fn + ".csv";
+		String outFile = this.fn;
 		try {
 			writer = new BufferedWriter(new FileWriter(outFile));
 			

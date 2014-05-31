@@ -238,10 +238,10 @@ weightLearning.close();
  */
 
 //
-Dumper dumper = new Dumper(distributionDB, GeneLabel, "GeneLabel_distributionDB");
+Dumper dumper = new Dumper(distributionDB, GeneLabel, "GeneLabel_distributionDB.csv");
 dumper.outputToFile();
 //
-dumper = new Dumper(dummy_DB, GeneLabel, "GeneLabel_dummy_DB");
+dumper = new Dumper(dummy_DB, GeneLabel, "GeneLabel_dummy_DB.csv");
 dumper.outputToFile();
 
 println model;
@@ -266,6 +266,12 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpUp.csv", ",");
 
 inserter = data.getInserter(ExpDown, observed_te)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpDown.csv", ",");
+
+//
+// load from Dump!
+//
+inserter = data.getInserter(GeneLabel, observed_te)
+InserterUtils.loadDelimitedDataTruth(inserter, "./" + "GeneLabel_distributionDB.csv", ",");
 
 /*
  * Random variable partitions
@@ -300,7 +306,7 @@ test_populator.populateFromDB(dummy_test, TargetPatientLabel);
 //
 test_populator.populateFromDB(distributionDB, GeneLabel);
 //
-dumper = new Dumper(testDB, GeneLabel, "GeneLabel_testDB");
+dumper = new Dumper(testDB, GeneLabel, "GeneLabel_testDB.csv");
 dumper.outputToFile();
 // test_populator.populateFromDB(dummy_DB, Activates);
 // test_populator.populateFromDB(dummy_DB, Inhibits);
