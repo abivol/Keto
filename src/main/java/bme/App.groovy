@@ -145,7 +145,7 @@ Partition PatientLabelTruth = new Partition(7);
 
 
 //def dir = 'data'+java.io.File.separator+ foldStr + 'train'+java.io.File.separator;
-def traindir = 'data' + java.io.File.separator + 'train' + java.io.File.separator;
+def traindir = 'data/Gleason_score' + java.io.File.separator + 'Train' + java.io.File.separator;
 
 /*
  * Observed data partition
@@ -171,17 +171,17 @@ inserter = data.getInserter(PatientLabel, observed_tr)
 InserterUtils.loadDelimitedDataTruth(inserter, traindir + "PatientLabel.csv", ",");
 
 inserter = data.getInserter(Activates, observed_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "Activates.csv", ",")
+InserterUtils.loadDelimitedData(inserter, traindir + "Activates.tab", "\t")
 // COMPLEX
 // InserterUtils.loadDelimitedDataTruth(inserter, traindir + "complex.tab", "\t")
 // FAMILY
 // InserterUtils.loadDelimitedDataTruth(inserter, traindir + "family.tab", "\t")
 
 inserter = data.getInserter(Inhibits, observed_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "Inhibits.csv", ",")
+InserterUtils.loadDelimitedData(inserter, traindir + "Inhibits.tab", "\t")
 
-inserter = data.getInserter(Similar, observed_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "Similar.csv", ",")
+// inserter = data.getInserter(Similar, observed_tr)
+// InserterUtils.loadDelimitedData(inserter, traindir + "Similar.csv", ",")
 
 
 /*
@@ -198,7 +198,7 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "TargetPatientLabel.cs
  */
 
 inserter = data.getInserter(Active, dummy_tr)
-InserterUtils.loadDelimitedData(inserter, traindir + "Active.csv", ",")
+InserterUtils.loadDelimitedData(inserter, traindir + "Active.tab", "\t")
 
 inserter = data.getInserter(GeneLabel, dummy_tr)
 InserterUtils.loadDelimitedData(inserter, traindir + "GeneLabel.csv", ",")
@@ -256,7 +256,7 @@ println model;
  */
 
 //def testdir = 'data'+java.io.File.separator+ foldStr + 'test'+java.io.File.separator;
-def testdir = 'data' + java.io.File.separator + 'test' + java.io.File.separator;
+def testdir = 'data/Gleason_score' + java.io.File.separator + 'Test' + java.io.File.separator;
 
 inserter = data.getInserter(TargetPatient, observed_te)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "TargetPatient.csv", ",")
@@ -283,7 +283,7 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "PatientLabel.csv",",")
 /* ?? predicates on latents ?? */
 
 inserter = data.getInserter(Active, dummy_te)
-InserterUtils.loadDelimitedData(inserter, testdir + "Active.csv", ",")
+InserterUtils.loadDelimitedData(inserter, testdir + "Active.tab", "\t")
 
 inserter = data.getInserter(TargetPatientLabel, dummy_te)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "BogusPatientLabel.csv", ",")

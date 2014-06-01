@@ -28,18 +28,16 @@ write.active = function(samples, genes, fn) {
     for(s in samples) {
         mx = rbind(mx, cbind(genes, s))
     }
-    write.table(mx, fn, sep=",", quote=F, col.names=F, row.names=F)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
 }
 
 
 #
 #
 #
-format.gexp = function(x, genes, i.train, i.test, odir=".", sd.f=0.5) {
+format.gexp = function(x, i.train, i.test, odir=".", sd.f=0.5) {
     stopifnot(length(intersect(i.train, i.test)) == 0)
 
-    # filter
-    x = x[genes, ]
     # features are always computed relative to training
     x.train = x[, i.train]
     v.m = apply(x.train, 1, mean)
@@ -106,15 +104,6 @@ format.gexp = function(x, genes, i.train, i.test, odir=".", sd.f=0.5) {
     write.table(test.up, fn, sep=",", quote=F, col.names=F, row.names=F)
     fn = sprintf("%s/Test/ExpDown.csv", odir)
     write.table(test.down, fn, sep=",", quote=F, col.names=F, row.names=F)
-    
-    #
-    # Active
-    #
-    fn = sprintf("%s/Train/Active.csv", odir)
-    write.active(colnames(x)[i.train], train.genes, fn)
-    #
-    fn = sprintf("%s/Test/Active.csv", odir)
-    write.active(colnames(x)[i.test], test.genes, fn)
 }
 
 
@@ -186,3 +175,34 @@ label.test = function(v.gleason, i.test, odir=".") {
 }
 
 
+#
+#
+#
+label.gene = function(x, fn.activ="Activates.tab", fn.inhib="Inhibits.tab") {
+    genes = NULL
+    df.activ = read.delim(fn.activ, header=F, as.is=T, check.names=F)
+    genes = union(genes, union(df.activ$V1, df.activ$V2))
+    df.inhib = read.delim(fn.inhib, header=F, as.is=T, check.names=F)
+    genes = union(genes, union(df.inhib$V1, df.inhib$V2))
+    #
+    genes = union(rownames(x), genes)
+    #
+    write.table(genes, "GeneLabel.csv", sep=",", quote=F, col.names=F, row.names=F)
+    return(genes)
+}
+
+
+
+#
+# Active genes
+#
+active.genes = function(x, genes, i.train, i.test, odir=".") {
+    # train
+    samples = colnames(x)[i.train]
+    fn = sprintf("Train/Active.tab", odir)
+    write.active(samples, genes, fn)
+    # test
+    samples = colnames(x)[i.test]
+    fn = sprintf("Test/Active.tab", odir)
+    write.active(samples, genes, fn)
+}

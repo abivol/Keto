@@ -159,7 +159,7 @@ class PSLCodeGen:
 #
 if __name__ == '__main__':
     pcg = PSLCodeGen()
-    pcg.read_graph("ucscSuperV3.0p2_pathway.tab")
+    pcg.read_graph("pathway.tab")
     pcg.parse_gates("complex")
     pcg.parse_gates("family")
     pcg.parse_2oper("activates")
