@@ -86,7 +86,7 @@ model.add predicate: "ExpUp" , types:[ArgumentType.UniqueID, ArgumentType.Unique
 // ExpDown(G, P) - observed
 model.add predicate: "ExpDown" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
 // model.add predicate: "MutPlus" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]  // GOF
-// model.add predicate: "MutMinus" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]  // LOF
+model.add predicate: "MutMinus" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]  // LOF
 
 // Active(G, P) -- latent
 model.add predicate: "Active" , types:[ArgumentType.UniqueID, ArgumentType.UniqueID]
@@ -108,7 +108,7 @@ model.add predicate: "Similar" , types:[ArgumentType.UniqueID, ArgumentType.Uniq
 model.add rule : ExpUp(G, P) >> Active(G, P), weight : 1
 model.add rule : ExpDown(G, P) >> ~Active(G, P), weight : 1
 // model.add rule : MutPlus(G,P) >> ~ActiveObs(G, P), weight : 1
-// model.add rule : MutMinus(G, P) >> ActiveObs(G, P), weight : 1
+model.add rule : MutMinus(G, P) >> ~Active(G, P), weight : 1
 
 // rules to relate gene activities via gene interaction network
 model.add rule : (Inhibits(G1, G2) & Active(G1, P)) >> ~Active(G2, P), weight : 1
@@ -161,8 +161,8 @@ InserterUtils.loadDelimitedDataTruth(inserter, traindir + "ExpDown.csv", ",");
 // inserter = data.getInserter(MutPlus, observed_tr)
 // InserterUtils.loadDelimitedDataTruth(inserter, traindir + "MutPlus.csv", ",");
 
-// inserter = data.getInserter(MutMinus, observed_tr)
-// InserterUtils.loadDelimitedDataTruth(inserter, traindir + "MutMinus.csv", ",");
+inserter = data.getInserter(MutMinus, observed_tr)
+InserterUtils.loadDelimitedDataTruth(inserter, traindir + "MutMinus.tab", "\t");
 
 inserter = data.getInserter(TargetPatient, observed_tr)
 InserterUtils.loadDelimitedDataTruth(inserter, traindir + "TargetPatient.csv", ",")
@@ -266,6 +266,10 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpUp.csv", ",");
 
 inserter = data.getInserter(ExpDown, observed_te)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpDown.csv", ",");
+
+inserter = data.getInserter(MutMinus, observed_tr)
+InserterUtils.loadDelimitedDataTruth(inserter, testdir + "MutMinus.tab", "\t");
+
 
 //
 // load from Dump!

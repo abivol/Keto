@@ -206,3 +206,34 @@ active.genes = function(x, genes, i.train, i.test, odir=".") {
     fn = sprintf("Test/Active.tab", odir)
     write.active(samples, genes, fn)
 }
+
+
+
+#
+# mutations
+#
+mutations = function(fn.maf, x, i.train, i.test, odir=".") {
+    df.maf = read.delim(fn.maf, header=T, as.is=T, check.names=F, sep="\t", quote="")
+    sel = which(df.maf$Variant_Classification %in% c("Frame_Shift_Del", "Frame_Shift_Ins", "Missense_Mutation", "Nonsense_Mutation"))
+    maf = df.maf[sel, c("Hugo_Symbol", "Variant_Classification", "Variant_Type", "Tumor_Sample_Barcode")]
+    maf$Sample = substr(maf$Tumor_Sample_Barcode, 1, 15)
+    View(maf)
+    samples = colnames(x)
+    #
+    # train
+    #
+    m2 = maf[maf$Sample %in% samples[i.train], ]
+    View(m2)
+    mx = cbind(m2$Hugo_Symbol, m2$Sample, 1.0)
+    fn = sprintf("Train/MutMinus.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
+    #
+    # test
+    #
+    m2 = maf[maf$Sample %in% samples[i.test], ]
+    View(m2)
+    mx = cbind(m2$Hugo_Symbol, m2$Sample, 1.0)
+    fn = sprintf("Test/MutMinus.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
+}
+
