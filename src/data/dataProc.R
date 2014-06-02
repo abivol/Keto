@@ -69,10 +69,10 @@ format.gexp = function(x, i.train, i.test, odir=".", sd.f=0.5) {
     train.up[, 3] = scale.01(as.numeric(train.up[, 3]))
     train.down[, 3] = scale.01(as.numeric(train.down[, 3]))
     # write Train
-    fn = sprintf("%s/Train/ExpUp.csv", odir)
-    write.table(train.up, fn, sep=",", quote=F, col.names=F, row.names=F)
-    fn = sprintf("%s/Train/ExpDown.csv", odir)
-    write.table(train.down, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Train/ExpUp.tab", odir)
+    write.table(train.up, fn, sep="\t", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Train/ExpDown.tab", odir)
+    write.table(train.down, fn, sep="\t", quote=F, col.names=F, row.names=F)
 
     #
     # test
@@ -100,10 +100,10 @@ format.gexp = function(x, i.train, i.test, odir=".", sd.f=0.5) {
     test.up[, 3] = scale.01(as.numeric(test.up[, 3]))
     test.down[, 3] = scale.01(as.numeric(test.down[, 3]))
     # write Test
-    fn = sprintf("%s/Test/ExpUp.csv", odir)
-    write.table(test.up, fn, sep=",", quote=F, col.names=F, row.names=F)
-    fn = sprintf("%s/Test/ExpDown.csv", odir)
-    write.table(test.down, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Test/ExpUp.tab", odir)
+    write.table(test.up, fn, sep="\t", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Test/ExpDown.tab", odir)
+    write.table(test.down, fn, sep="\t", quote=F, col.names=F, row.names=F)
 }
 
 
@@ -120,20 +120,20 @@ label.train = function(v.gleason, i.train, odir=".", fsplit=0.2) {
     #
     nms = names(v.gleason)[i.target]
     
-    # TargetPatient.csv
+    # TargetPatient
     mx = cbind(nms, 1.0)
-    fn = sprintf("%s/Train/TargetPatient.csv", odir)
-    write.table(mx, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Train/TargetPatient.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
 
-    # BogusPatientLabel.csv
+    # BogusPatientLabel
     mx = cbind(nms, 0.5)
-    fn = sprintf("%s/Train/BogusPatientLabel.csv", odir)
-    write.table(mx, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Train/BogusPatientLabel.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
     
-    # TargetPatientLabel.csv
+    # TargetPatientLabel
     mx = cbind(nms, v.gleason[i.target])
-    fn = sprintf("%s/Train/TargetPatientLabel.csv", odir)
-    write.table(mx, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Train/TargetPatientLabel.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
 
 
     #
@@ -141,10 +141,10 @@ label.train = function(v.gleason, i.train, odir=".", fsplit=0.2) {
     #
     nms = names(v.gleason)[i.nontar]
 
-    # PatientLabel.csv
+    # PatientLabel.
     mx = cbind(nms, v.gleason[i.nontar])
-    fn = sprintf("%s/Train/PatientLabel.csv", odir)
-    write.table(mx, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Train/PatientLabel.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
 }
 
 
@@ -158,36 +158,38 @@ label.test = function(v.gleason, i.test, odir=".") {
     #
     nms = names(v.gleason)[i.test]
     
-    # TargetPatient.csv
+    # TargetPatient
     mx = cbind(nms, 1.0)
-    fn = sprintf("%s/Test/TargetPatient.csv", odir)
-    write.table(mx, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Test/TargetPatient.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
 
-    # BogusPatientLabel.csv
+    # BogusPatientLabel
     mx = cbind(nms, 0.5)
-    fn = sprintf("%s/Test/BogusPatientLabel.csv", odir)
-    write.table(mx, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Test/BogusPatientLabel.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
     
-    # PatientLabel.csv
+    # PatientLabel
     mx = cbind(nms, v.gleason[i.test])
-    fn = sprintf("%s/Test/PatientLabel.csv", odir)
-    write.table(mx, fn, sep=",", quote=F, col.names=F, row.names=F)
+    fn = sprintf("%s/Test/PatientLabel.tab", odir)
+    write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
 }
 
 
 #
 #
 #
-label.gene = function(x, fn.activ="Activates.tab", fn.inhib="Inhibits.tab") {
-    genes = NULL
-    df.activ = read.delim(fn.activ, header=F, as.is=T, check.names=F)
-    genes = union(genes, union(df.activ$V1, df.activ$V2))
-    df.inhib = read.delim(fn.inhib, header=F, as.is=T, check.names=F)
-    genes = union(genes, union(df.inhib$V1, df.inhib$V2))
+label.gene = function(x, v.fn=c("Train/Activates.tab",
+    fn.fam="Train/Family.tab",
+    fn.comp="Train/Complex.tab",
+    fn.inhib="Train/Inhibits.tab")
+    ) {
+    genes = rownames(x)
+    for(fn in v.fn) {
+        df.fn = read.delim(fn, header=F, as.is=T, check.names=F)
+        genes = union(genes, union(df.fn$V1, df.fn$V2))
+    }
     #
-    genes = union(rownames(x), genes)
-    #
-    write.table(genes, "GeneLabel.csv", sep=",", quote=F, col.names=F, row.names=F)
+    write.table(genes, "Train/GeneLabel.tab", sep="\t", quote=F, col.names=F, row.names=F)
     return(genes)
 }
 
@@ -217,22 +219,26 @@ mutations = function(fn.maf, x, i.train, i.test, odir=".") {
     sel = which(df.maf$Variant_Classification %in% c("Frame_Shift_Del", "Frame_Shift_Ins", "Missense_Mutation", "Nonsense_Mutation"))
     maf = df.maf[sel, c("Hugo_Symbol", "Variant_Classification", "Variant_Type", "Tumor_Sample_Barcode")]
     maf$Sample = substr(maf$Tumor_Sample_Barcode, 1, 15)
-    View(maf)
+    # View(maf)
     samples = colnames(x)
     #
     # train
     #
     m2 = maf[maf$Sample %in% samples[i.train], ]
-    View(m2)
+    # View(m2)
     mx = cbind(m2$Hugo_Symbol, m2$Sample, 1.0)
+    key = paste(mx[, 1], mx[, 2], sep="::")
+    mx = mx[!duplicated(key), ]
     fn = sprintf("Train/MutMinus.tab", odir)
     write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
     #
     # test
     #
     m2 = maf[maf$Sample %in% samples[i.test], ]
-    View(m2)
+    # View(m2)
     mx = cbind(m2$Hugo_Symbol, m2$Sample, 1.0)
+    key = paste(mx[, 1], mx[, 2], sep="::")
+    mx = mx[!duplicated(key), ]
     fn = sprintf("Test/MutMinus.tab", odir)
     write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
 }
