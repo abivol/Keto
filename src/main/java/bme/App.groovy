@@ -267,7 +267,7 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpUp.tab", "\t");
 inserter = data.getInserter(ExpDown, observed_te)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpDown.tab", "\t");
 
-inserter = data.getInserter(MutMinus, observed_tr)
+inserter = data.getInserter(MutMinus, observed_te)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "MutMinus.tab", "\t");
 
 

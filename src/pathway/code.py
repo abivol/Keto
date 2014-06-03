@@ -60,7 +60,7 @@ class PSLCodeGen:
     def gen_code_gates(self, d_fh, e_type):
         #
         name = e_type.upper()
-        rel = {"complex":"&", "family":"|"} [e_type]
+        rel = {"Complex":"&", "Family":"|"} [e_type]
         #
         fn = "PSL_{0}.groovy".format(e_type)
         fh = open(fn, "w")
@@ -98,17 +98,17 @@ class PSLCodeGen:
     # generate PSL code & data for composite entities: complexes / families,
     # which act like AND/OR gates w/ various number of operands
     #
-    def parse_gates(self, e_type="complex"):
+    def parse_gates(self, e_type="Complex"):
         #
         g = self.Graph
-        rel = {"complex":"component>", "family":"member>"} [e_type]
+        rel = {"Complex":"component>", "Family":"member>"} [e_type]
         # file handles (each file stores expressions w/ a specific number of operands)
         fn = "{0}.tab".format(e_type)
         fh = open(fn, "w")
         # generate rules for entities
         edgeTypes = networkx.get_edge_attributes(g, "edge")
         for n in g.nodes():
-            if (not n.endswith("({0})".format(e_type)) or
+            if (not n.endswith("({0})".format(e_type.lower())) or
                 len(g.successors(n)) <= 0 or len(g.predecessors(n)) <= 0):
                 continue
             # select only component> predecessors
@@ -119,7 +119,7 @@ class PSLCodeGen:
                 continue
             # weight
             w = 1.0
-            if e_type == "complex":
+            if e_type == "Complex":
                 w = 1.0 / n_op
             #
             for p in l_pc:
@@ -131,12 +131,12 @@ class PSLCodeGen:
     #
     # generate PSL code & data for 2 operand pathway relations
     #
-    # e_type = "activates" (G1, G2) or "inhibits" (G1, G2)
+    # e_type = "Activates" (G1, G2) or "Inhibits" (G1, G2)
     #
     def parse_2oper(self, e_type):
         #
         g = self.Graph
-        rel = {"activates":["-a>", "-t>", "-ap>"], "inhibits":["-a|", "-t|", "-ap|"]} [e_type]
+        rel = {"Activates":["-a>", "-t>", "-ap>"], "Inhibits":["-a|", "-t|", "-ap|"]} [e_type]
         #
         fn = "{0}.tab".format(e_type)
         fh = open(fn, "w")
@@ -154,13 +154,62 @@ class PSLCodeGen:
 
 
 
+    #
+    # select a smaller graph
+    #
+    def sel_graph(self, nodes, p_len=10, fn="graph_flt.tab"):
+        g = self.Graph
+        seln = set()
+        #
+        nodes = set(nodes).intersection(g.nodes())
+        print "len(nodes): {0}".format(len(nodes))
+        res = set()
+        # enumerate all shortest paths of length up to p_len
+        for i in nodes:
+            print "node: {0}".format(i)
+            ssp = networkx.single_source_shortest_path(g, i, p_len)
+            target = set(ssp.keys()).intersection(nodes)
+            # print "ssp: {0}".format(ssp)
+            for t in target:
+                p = ssp[t]
+                print p
+                # print "len(p): {0}".format(len(p))
+                # add
+                for j in p:
+                    seln.add(j)
+                print "ADD: len(seln): {0}".format(len(seln))
+        #
+        rg = g.subgraph(seln)
+        #
+        networkx.write_edgelist(rg, fn, delimiter="\t", data=["edge"], )
+        return(rg)
+
 #
 #
 #
-if __name__ == '__main__':
+def parse_graph():
+    pcg = PSLCodeGen()
+    pcg.read_graph("graph_flt.tab")
+    pcg.parse_gates("Complex")
+    pcg.parse_gates("Family")
+    pcg.parse_2oper("Activates")
+    pcg.parse_2oper("Inhibits")
+
+
+#
+#
+#
+def filter_graph():
     pcg = PSLCodeGen()
     pcg.read_graph("pathway.tab")
-    pcg.parse_gates("complex")
-    pcg.parse_gates("family")
-    pcg.parse_2oper("activates")
-    pcg.parse_2oper("inhibits")
+    genes = set()
+    with open("genes.tab", "r") as f:
+        for ln in f:
+            ln = ln.strip()
+            genes.add(ln)
+    pcg.sel_graph(genes)
+
+
+if __name__ == "__main__":
+    filter_graph()
+    parse_graph()
