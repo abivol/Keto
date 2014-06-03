@@ -243,3 +243,19 @@ mutations = function(fn.maf, x, i.train, i.test, odir=".") {
     write.table(mx, fn, sep="\t", quote=F, col.names=F, row.names=F)
 }
 
+
+#
+# sample code to generate fold data
+#
+sample.fold = function(X,Y,Z) {
+
+    i.test = i.folds[113:139]
+    i.train = setdiff(1:ncol(x), i.test)
+    format.gexp(x, i.train, i.test)
+    format.gexp(x, i.train, i.test)
+    label.train(y, i.train)
+    label.test(y, i.test)
+    genes = label.gene(x)
+    active.genes(x, genes, i.train, i.test)
+    mutations("mutation/maf.maf", x, i.train, i.test)
+}
