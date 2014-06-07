@@ -39,9 +39,8 @@ format.gexp = function(x, i.train, i.test, odir=".", sd.f=0.5) {
     stopifnot(length(intersect(i.train, i.test)) == 0)
 
     # features are always computed relative to training
-    x.train = x[, i.train]
-    v.m = apply(x.train, 1, mean)
-    v.sd = apply(x.train, 1, sd)
+    v.m = apply(x, 1, mean)
+    v.sd = apply(x, 1, sd)
     
     #
     # train
@@ -51,7 +50,7 @@ format.gexp = function(x, i.train, i.test, odir=".", sd.f=0.5) {
     train.genes = NULL
     for(i in i.train) {
         v.x = x[, i]
-        z = abs(v.x) / v.sd
+        z = abs(v.x)
         cn = colnames(x)[i]
         # up
         sel = which(v.x >= v.m + v.sd * sd.f)
@@ -82,7 +81,7 @@ format.gexp = function(x, i.train, i.test, odir=".", sd.f=0.5) {
     test.genes = NULL
     for(i in i.test) {
         v.x = x[, i]
-        z = abs(v.x) / v.sd
+        z = abs(v.x)
         cn = colnames(x)[i]
         # up
         sel = which(v.x >= v.m + v.sd * sd.f)

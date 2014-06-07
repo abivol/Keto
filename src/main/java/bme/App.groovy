@@ -270,6 +270,17 @@ InserterUtils.loadDelimitedDataTruth(inserter, testdir + "ExpDown.tab", "\t");
 inserter = data.getInserter(MutMinus, observed_te)
 InserterUtils.loadDelimitedDataTruth(inserter, testdir + "MutMinus.tab", "\t");
 
+// PATHWAY
+inserter = data.getInserter(Activates, observed_te)
+InserterUtils.loadDelimitedData(inserter, traindir + "Activates.tab", "\t")
+// COMPLEX
+InserterUtils.loadDelimitedDataTruth(inserter, traindir + "Complex.tab", "\t")
+// FAMILY
+InserterUtils.loadDelimitedDataTruth(inserter, traindir + "Family.tab", "\t")
+//
+inserter = data.getInserter(Inhibits, observed_te)
+InserterUtils.loadDelimitedData(inserter, traindir + "Inhibits.tab", "\t")
+
 
 //
 // load from Dump!
